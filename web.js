@@ -16,6 +16,8 @@ var bufferLength2 = AnaliserNode2.frequencyBinCount;
 var frequency2 = new Uint8Array(bufferLength2);
 var source = audioContext.createBufferSource();
 
+request.onload = onload;
+
 function onload() {
     var res = request.response;
 
