@@ -16,45 +16,40 @@ var bufferLength2 = AnaliserNode2.frequencyBinCount;
 var frequency2 = new Uint8Array(bufferLength2);
 var source = audioContext.createBufferSource();
 
-request.onload = onload;
+window.addEventListener("load", onload, false);
 
 function onload() {
-    var res = request.response;
 
     canvas = document.getElementById("canvas");
     context = canvas.getContext("2d");
-
-    audioContext.decodeAudioData(res, function (buf) {
-        source.buffer = buf;
-        navigator.mediaDevices.getUserMedia({
-            audio: true
-        }).then(function (stream) {
-            audioContext.destination.channelCount = 2;
-            var source = audioContext.createMediaStreamSource(stream);
-            var gainNode = audioContext.createGain();
-            var splitterR = audioContext.createChannelSplitter(2);
-            var splitterL = audioContext.createChannelSplitter(2);
-            var merger = audioContext.createChannelMerger(2);
-            var scriptNode = audioContext.createScriptProcessor(1024, 1, 1);
-            scriptNode.onaudioprocess = process;
-            var filter = audioContext.createBiquadFilter();
-            filter.type = "lowpass";
-            filter.frequency.value = 500;
-            filter.gain.value = 25;
-            gainNode.gain.value = 1;
-            source.connect(splitterL);
-            source.connect(splitterR);
-            splitterR.connect(merger, 0, 0);
-            splitterL.connect(merger, 0, 1);
-            merger.connect(gainNode);
-            gainNode.connect(filter);
-            filter.connect(scriptNode);
-            scriptNode.connect(audioContext.destination);
-            //source.connect(AnaliserNode2);
-            scriptNode.connect(AnaliserNode);
-        });
-        requestAnimationFrame(animate);
+    navigator.mediaDevices.getUserMedia({
+        audio: true
+    }).then(function (stream) {
+        audioContext.destination.channelCount = 2;
+        var source = audioContext.createMediaStreamSource(stream);
+        var gainNode = audioContext.createGain();
+        var splitterR = audioContext.createChannelSplitter(2);
+        var splitterL = audioContext.createChannelSplitter(2);
+        var merger = audioContext.createChannelMerger(2);
+        var scriptNode = audioContext.createScriptProcessor(1024, 1, 1);
+        scriptNode.onaudioprocess = process;
+        var filter = audioContext.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.value = 500;
+        filter.gain.value = 25;
+        gainNode.gain.value = 1;
+        source.connect(splitterL);
+        source.connect(splitterR);
+        splitterR.connect(merger, 0, 0);
+        splitterL.connect(merger, 0, 1);
+        merger.connect(gainNode);
+        gainNode.connect(filter);
+        filter.connect(scriptNode);
+        scriptNode.connect(audioContext.destination);
+        //source.connect(AnaliserNode2);
+        scriptNode.connect(AnaliserNode);
     });
+    requestAnimationFrame(animate);
 };
 
 function animate(timestamp) {
