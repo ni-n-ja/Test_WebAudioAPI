@@ -16,13 +16,6 @@ var bufferLength2 = AnaliserNode2.frequencyBinCount;
 var frequency2 = new Uint8Array(bufferLength2);
 var source = audioContext.createBufferSource();
 
-var request = new XMLHttpRequest();
-request.open('GET', 'mp3/cc.mp3', true);
-request.responseType = 'arraybuffer';
-request.send();
-
-request.onload = onload;
-
 function onload() {
     var res = request.response;
 
